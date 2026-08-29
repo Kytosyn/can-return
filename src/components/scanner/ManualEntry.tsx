@@ -18,7 +18,7 @@ export function ManualEntry({ onSubmit }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-      <label className="text-sm font-medium text-gray-700">
+      <label className="text-sm font-medium text-gray-300">
         Enter barcode number (8–13 digits)
       </label>
       <input
@@ -28,7 +28,7 @@ export function ManualEntry({ onSubmit }: Props) {
         value={value}
         onChange={(e) => setValue(e.target.value.replace(/\D/g, ""))}
         placeholder="e.g. 8888001234567"
-        className="w-full px-4 py-3 border border-gray-300 rounded-xl text-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+        className="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-gray-100 rounded-xl text-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent placeholder:text-gray-500"
         maxLength={13}
       />
       <Button

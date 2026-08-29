@@ -1,10 +1,10 @@
 export function PrivacyNotice() {
   return (
-    <div className="px-4 py-6 space-y-4 text-sm text-gray-700 leading-relaxed">
-      <h2 className="text-lg font-bold text-gray-900">Privacy Notice</h2>
+    <div className="px-4 py-6 space-y-4 text-sm text-gray-300 leading-relaxed">
+      <h2 className="text-lg font-bold text-white">Privacy Notice</h2>
 
       <section>
-        <h3 className="font-semibold text-gray-800 mb-1">
+        <h3 className="font-semibold text-gray-200 mb-1">
           What stays on your device
         </h3>
         <ul className="list-disc pl-5 space-y-1">
@@ -27,7 +27,7 @@ export function PrivacyNotice() {
       </section>
 
       <section>
-        <h3 className="font-semibold text-gray-800 mb-1">
+        <h3 className="font-semibold text-gray-200 mb-1">
           What may use the network
         </h3>
         <ul className="list-disc pl-5 space-y-1">
@@ -52,7 +52,7 @@ export function PrivacyNotice() {
       </section>
 
       <section>
-        <h3 className="font-semibold text-gray-800 mb-1">
+        <h3 className="font-semibold text-gray-200 mb-1">
           What we never do
         </h3>
         <ul className="list-disc pl-5 space-y-1">
@@ -69,7 +69,7 @@ export function PrivacyNotice() {
       </section>
 
       <section>
-        <h3 className="font-semibold text-gray-800 mb-1">Your controls</h3>
+        <h3 className="font-semibold text-gray-200 mb-1">Your controls</h3>
         <ul className="list-disc pl-5 space-y-1">
           <li>
             <strong>Delete local data:</strong> Use the button in Settings to
@@ -88,7 +88,7 @@ export function PrivacyNotice() {
         </ul>
       </section>
 
-      <p className="text-xs text-gray-500 pt-4 border-t">
+      <p className="text-xs text-gray-500 pt-4 border-t border-gray-800">
         This app is an independent tool for checking BCRS eligibility. It is
         not affiliated with, endorsed by, or officially connected to NEA
         Singapore, the BCRS operator, or Return Right.

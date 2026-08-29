@@ -99,10 +99,10 @@ export function PackageScanner({ onClassified, onError }: Props) {
     <div className="flex flex-col items-center gap-4">
       {/* Model status */}
       {!classifierState.ready && (
-        <div className="w-full bg-blue-50 border border-blue-200 rounded-xl p-3 text-sm text-blue-800 text-center">
+        <div className="w-full bg-blue-950 border border-blue-800 rounded-xl p-3 text-sm text-blue-300 text-center">
           {classifierState.loadingMessage ?? "Preparing image classifier…"}
           {classifierState.error && (
-            <p className="text-red-600 mt-1">{classifierState.error}</p>
+            <p className="text-red-400 mt-1">{classifierState.error}</p>
           )}
         </div>
       )}
@@ -164,7 +164,7 @@ export function PackageScanner({ onClassified, onError }: Props) {
         )}
       </div>
 
-      <p className="text-xs text-center text-gray-400">
+      <p className="text-xs text-center text-gray-500">
         Image analysis runs entirely on your device using AI — nothing is uploaded.
       </p>
     </div>

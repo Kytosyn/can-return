@@ -22,29 +22,29 @@ export function ClassificationResultCard({ result, onScanAgain, onFindNearby }: 
       <div
         className={`border rounded-2xl p-5 text-center ${
           result.bcrsEligible
-            ? "bg-green-50 border-green-200"
-            : "bg-red-50 border-red-200"
+            ? "bg-green-950 border-green-800"
+            : "bg-red-950 border-red-800"
         }`}
       >
         <span className="text-4xl block mb-2">{icon}</span>
         <h2
           className={`text-lg font-bold ${
-            result.bcrsEligible ? "text-green-800" : "text-red-800"
+            result.bcrsEligible ? "text-green-400" : "text-red-400"
           }`}
         >
           {result.label}
         </h2>
-        <p className="text-sm text-gray-600 mt-1">
+        <p className="text-sm text-gray-400 mt-1">
           Confidence: {Math.round(result.confidence * 100)}%
         </p>
 
         {result.bcrsEligible ? (
-          <p className="text-sm text-green-700 mt-2">
+          <p className="text-sm text-green-400 mt-2">
             This packaging type ({result.materialHint.toUpperCase()}) is eligible
             for BCRS — if it's between 150ml and 3L and carries a Deposit Mark.
           </p>
         ) : (
-          <p className="text-sm text-red-700 mt-2">
+          <p className="text-sm text-red-400 mt-2">
             This packaging type ({result.materialHint === "other" ? "Tetra Pak" : result.materialHint.toUpperCase()}) is{" "}
             <strong>not covered</strong> by BCRS. Only PET plastic, aluminium,
             and steel containers (150ml–3L) are eligible.
@@ -53,8 +53,8 @@ export function ClassificationResultCard({ result, onScanAgain, onFindNearby }: 
       </div>
 
       {/* All predictions */}
-      <div className="border border-gray-200 rounded-xl p-4">
-        <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+      <div className="border border-gray-800 rounded-xl p-4">
+        <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">
           All predictions
         </h3>
         <div className="space-y-2">
@@ -63,12 +63,12 @@ export function ClassificationResultCard({ result, onScanAgain, onFindNearby }: 
               <span className="text-lg">{categoryIcons[p.category] ?? "📦"}</span>
               <div className="flex-1">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-800">{p.category.replace("/", " / ")}</span>
-                  <span className="text-gray-500">
+                  <span className="text-gray-200">{p.category.replace("/", " / ")}</span>
+                  <span className="text-gray-400">
                     {Math.round(p.confidence * 100)}%
                   </span>
                 </div>
-                <div className="mt-0.5 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <div className="mt-0.5 h-1.5 bg-gray-800 rounded-full overflow-hidden">
                   <div
                     className={`h-full rounded-full ${
                       i === 0 ? "bg-brand-500" : "bg-gray-300"
@@ -83,7 +83,7 @@ export function ClassificationResultCard({ result, onScanAgain, onFindNearby }: 
       </div>
 
       {/* BCRS eligibility note */}
-      <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-800">
+      <div className="bg-amber-950 border border-amber-800 rounded-xl p-4 text-sm text-amber-300">
         <strong>Note:</strong> This visual identification is a guide only. For a
         definitive eligibility check, scan the barcode on the container using the
         "Scan" tab. The AI identifies the packaging material, not whether the
@@ -93,7 +93,7 @@ export function ClassificationResultCard({ result, onScanAgain, onFindNearby }: 
       <div className="flex gap-3">
         <button
           onClick={onScanAgain}
-          className="flex-1 py-3 rounded-xl border border-gray-300 text-gray-700 font-medium active:bg-gray-100"
+          className="flex-1 py-3 rounded-xl border border-gray-700 text-gray-300 font-medium active:bg-gray-800"
         >
           Scan Another
         </button>

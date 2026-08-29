@@ -54,19 +54,19 @@ export function ScanPage() {
   return (
     <div className="px-4 pt-6 space-y-6">
       <div className="text-center">
-        <h1 className="text-2xl font-bold text-gray-900">Can Return?</h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <h1 className="text-2xl font-bold text-white">Can Return?</h1>
+        <p className="text-sm text-gray-400 mt-1">
           Check if your drink container carries a 10¢ BCRS deposit
         </p>
       </div>
 
-      <div className="flex rounded-xl bg-gray-100 p-1">
+      <div className="flex rounded-xl bg-gray-800 p-1">
         <button
           onClick={() => { setMode("scan"); clearLastClassification(); }}
           className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
             mode === "scan"
-              ? "bg-white shadow text-gray-900"
-              : "text-gray-500"
+              ? "bg-gray-700 shadow text-white"
+              : "text-gray-400"
           }`}
         >
           Barcode
@@ -75,8 +75,8 @@ export function ScanPage() {
           onClick={() => { setMode("manual"); clearLastClassification(); }}
           className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
             mode === "manual"
-              ? "bg-white shadow text-gray-900"
-              : "text-gray-500"
+              ? "bg-gray-700 shadow text-white"
+              : "text-gray-400"
           }`}
         >
           Manual
@@ -85,8 +85,8 @@ export function ScanPage() {
           onClick={() => { setMode("identify"); clearLastScan(); }}
           className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
             mode === "identify"
-              ? "bg-white shadow text-gray-900"
-              : "text-gray-500"
+              ? "bg-gray-700 shadow text-white"
+              : "text-gray-400"
           }`}
         >
           Identify
@@ -97,7 +97,7 @@ export function ScanPage() {
       {mode === "manual" && <ManualEntry onSubmit={handleManual} />}
       {mode === "identify" && <PackageScanner onClassified={handleClassified} />}
 
-      <p className="text-xs text-center text-gray-400">
+      <p className="text-xs text-center text-gray-500">
         {mode === "identify"
           ? "Image analysis runs on-device — nothing is uploaded."
           : "Scanning runs entirely on your device — no data is uploaded."}

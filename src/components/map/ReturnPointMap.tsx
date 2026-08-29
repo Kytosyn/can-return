@@ -32,7 +32,7 @@ export function ReturnPointMap({ points, userPosition }: Props) {
   const center = userPosition ?? SINGAPORE_CENTER;
 
   return (
-    <div className="w-full h-64 rounded-2xl overflow-hidden border border-gray-200">
+    <div className="w-full h-64 rounded-2xl overflow-hidden border border-gray-800">
       <MapContainer
         center={[center.latitude, center.longitude]}
         zoom={12}

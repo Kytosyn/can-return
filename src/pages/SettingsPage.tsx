@@ -21,34 +21,34 @@ export function SettingsPage() {
   return (
     <div className="px-4 pt-6 space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
+        <h1 className="text-2xl font-bold text-white">Settings</h1>
       </div>
 
       <section className="space-y-3">
-        <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+        <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide">
           Data & Privacy
         </h2>
 
         <button
           onClick={() => setShowPrivacy(!showPrivacy)}
-          className="w-full text-left border border-gray-200 rounded-xl p-4 active:bg-gray-50"
+          className="w-full text-left border border-gray-800 rounded-xl p-4 active:bg-gray-800"
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="font-medium text-gray-900">Privacy Notice</p>
-              <p className="text-xs text-gray-500 mt-0.5">
+              <p className="font-medium text-white">Privacy Notice</p>
+              <p className="text-xs text-gray-400 mt-0.5">
                 What data is used and what stays on your device
               </p>
             </div>
-            <span className="text-gray-400">{showPrivacy ? "▲" : "▼"}</span>
+            <span className="text-gray-500">{showPrivacy ? "▲" : "▼"}</span>
           </div>
         </button>
 
         {showPrivacy && <PrivacyNotice />}
 
-        <div className="border border-gray-200 rounded-xl p-4">
-          <p className="font-medium text-gray-900 mb-1">Delete Local Data</p>
-          <p className="text-xs text-gray-500 mb-3">
+        <div className="border border-gray-800 rounded-xl p-4">
+          <p className="font-medium text-white mb-1">Delete Local Data</p>
+          <p className="text-xs text-gray-400 mb-3">
             Erases all cached scan history and return point data from this
             device. The eligibility database will be re-downloaded on next
             visit.
@@ -71,10 +71,10 @@ export function SettingsPage() {
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+        <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide">
           About
         </h2>
-        <div className="border border-gray-200 rounded-xl p-4 text-sm text-gray-600 space-y-2">
+        <div className="border border-gray-800 rounded-xl p-4 text-sm text-gray-300 space-y-2">
           <p>
             <strong>Can Return?</strong> helps you check if a drink container
             carries a 10-cent deposit under Singapore's Beverage Container
@@ -89,10 +89,10 @@ export function SettingsPage() {
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+        <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide">
           BCRS Info
         </h2>
-        <div className="border border-gray-200 rounded-xl p-4 text-sm text-gray-600 space-y-2">
+        <div className="border border-gray-800 rounded-xl p-4 text-sm text-gray-300 space-y-2">
           <p>
             From <strong>1 April 2026</strong>, beverage producers in Singapore
             must register eligible containers (PET plastic, aluminium, steel;
