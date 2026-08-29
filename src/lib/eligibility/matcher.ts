@@ -1,5 +1,4 @@
 import type {
-  DepositMarkEntry,
   EligibilityDatabase,
   EligibilityResult,
 } from "./types";

@@ -129,7 +129,7 @@ export async function scanFromImage(
   image: HTMLImageElement | HTMLCanvasElement | ImageBitmap,
 ): Promise<BarcodeResult | null> {
   const det = await getDetector();
-  const results = await det.detect(image);
+  const results = await det.detect(image as any);
   if (results.length === 0) return null;
   return {
     rawValue: results[0].rawValue,

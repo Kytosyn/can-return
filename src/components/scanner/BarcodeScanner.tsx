@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { scanFromCamera } from "../../lib/barcode/scanner";
 import type { BarcodeResult, ScanStatus } from "../../lib/barcode/types";
 import { Button } from "../ui/Button";

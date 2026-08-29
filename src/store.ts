@@ -22,7 +22,7 @@ interface AppState {
   returnPointsCache: ReturnPointsCache | null;
   userPosition: GeoPosition | null;
   manualPostal: string | null;
-  nearbyPoints: (ReturnPoint & { distanceKm: number })[];
+  nearbyPoints: (ReturnPoint & { distanceKm?: number })[];
 
   // Actions
   initDb: () => Promise<void>;

@@ -1,4 +1,4 @@
-import { get, set, del, clear, keys } from "idb-keyval";
+import { get, set, del, keys } from "idb-keyval";
 
 const DB_PREFIX = "bcrs:";
 
