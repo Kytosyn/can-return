@@ -22,9 +22,11 @@ function materialOk(material: string): boolean {
 /**
  * Check a barcode against the local eligibility database.
  *
- * Returns a verdict with a clear one-line reason. During the transition
- * period (1 Apr – 30 Sep 2026), a barcode that is not found in the
- * database returns "uncertain" instead of "not_eligible".
+ * The database is the single source of truth:
+ *   - Found + correct material/size + Deposit Mark → eligible
+ *   - Found + wrong material or size → not eligible
+ *   - Found + no Deposit Mark yet (transition period) → uncertain
+ *   - NOT found in database → not eligible (not registered = not returnable)
  */
 export function checkEligibility(
   barcode: string,
@@ -33,54 +35,54 @@ export function checkEligibility(
   const normalised = barcode.replace(/\s/g, "");
   const entry = db.entries.find((e) => e.barcode === normalised);
 
-  if (entry) {
-    if (!materialOk(entry.material)) {
-      return {
-        verdict: "not_eligible",
-        reason: `Container material (${entry.material}) is not covered by BCRS. Only PET plastic, aluminium, and steel are eligible.`,
-        entry,
-      };
-    }
-    if (!sizeOk(entry.volumeMl)) {
-      return {
-        verdict: "not_eligible",
-        reason: `Container size (${entry.volumeMl}ml) is outside the 150ml–3L BCRS range.`,
-        entry,
-      };
-    }
-    if (!entry.hasDepositMark) {
-      if (isInTransitionPeriod()) {
-        return {
-          verdict: "uncertain",
-          reason: `${entry.productName ?? "This product"} is registered but does not yet carry a Deposit Mark. It may become eligible during the transition period (until 30 Sep 2026).`,
-          entry,
-        };
-      }
-      return {
-        verdict: "not_eligible",
-        reason: `This product is registered but does not carry a Deposit Mark. The transition period has ended.`,
-        entry,
-      };
-    }
+  // Not in the database → not eligible. Period.
+  if (!entry) {
     return {
-      verdict: "eligible",
-      reason: `${entry.productName ?? "This container"} carries a 10-cent deposit. Return it to any Return Right RVM.`,
+      verdict: "not_eligible",
+      reason:
+        "This barcode is not registered in the BCRS deposit database. Only registered products carry a 10-cent deposit.",
+    };
+  }
+
+  // Wrong material
+  if (!materialOk(entry.material)) {
+    return {
+      verdict: "not_eligible",
+      reason: `Container material (${entry.material}) is not covered by BCRS. Only PET plastic, aluminium, and steel are eligible.`,
       entry,
     };
   }
 
-  // Not found in database
-  if (isInTransitionPeriod()) {
+  // Wrong size
+  if (!sizeOk(entry.volumeMl)) {
     return {
-      verdict: "uncertain",
-      reason:
-        "This barcode is not yet in our database. During the transition period (until 30 Sep 2026), new products are still being registered — it may become eligible.",
+      verdict: "not_eligible",
+      reason: `Container size (${entry.volumeMl}ml) is outside the 150ml–3L BCRS range.`,
+      entry,
     };
   }
+
+  // Registered, right material/size, but no Deposit Mark yet
+  if (!entry.hasDepositMark) {
+    if (isInTransitionPeriod()) {
+      return {
+        verdict: "uncertain",
+        reason: `${entry.productName ?? "This product"} is registered but does not yet carry a Deposit Mark. It should become eligible during the transition period (until 30 Sep 2026).`,
+        entry,
+      };
+    }
+    return {
+      verdict: "not_eligible",
+      reason: `This product is registered but does not carry a Deposit Mark. The transition period has ended.`,
+      entry,
+    };
+  }
+
+  // All checks pass
   return {
-    verdict: "not_eligible",
-    reason:
-      "This barcode is not registered in the BCRS deposit database. The container is not eligible for a 10-cent refund.",
+    verdict: "eligible",
+    reason: `${entry.productName ?? "This container"} carries a 10-cent deposit. Return it to any Return Right RVM.`,
+    entry,
   };
 }
 
