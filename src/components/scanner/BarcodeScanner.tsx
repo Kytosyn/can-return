@@ -1,0 +1,75 @@
+import { useCallback, useEffect, useRef, useState } from "react";
+import { scanFromCamera } from "../../lib/barcode/scanner";
+import type { BarcodeResult, ScanStatus } from "../../lib/barcode/types";
+import { Button } from "../ui/Button";
+
+interface Props {
+  onDetected: (result: BarcodeResult) => void;
+  onError?: (message: string) => void;
+}
+
+export function BarcodeScanner({ onDetected, onError }: Props) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [status, setStatus] = useState<ScanStatus>("idle");
+  const [lastError, setLastError] = useState<string | null>(null);
+
+  const startScan = useCallback(async () => {
+    if (!videoRef.current) return;
+    setStatus("requesting-camera");
+    setLastError(null);
+    try {
+      const result = await scanFromCamera(videoRef.current, {
+        facingMode: "environment",
+        timeoutMs: 30_000,
+      });
+      setStatus("detected");
+      onDetected(result);
+    } catch (err: any) {
+      setStatus("error");
+      const msg = err.message ?? "Scan failed";
+      setLastError(msg);
+      onError?.(msg);
+    }
+  }, [onDetected, onError]);
+
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <div className="relative w-full aspect-[4/3] bg-gray-900 rounded-2xl overflow-hidden">
+        <video
+          ref={videoRef}
+          className="absolute inset-0 w-full h-full object-cover"
+          playsInline
+          muted
+        />
+        {status === "idle" && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <p className="text-white/70 text-sm">Tap "Start Scanning" below</p>
+          </div>
+        )}
+        {status === "scanning" && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-48 h-48 border-2 border-white/60 rounded-lg animate-pulse" />
+          </div>
+        )}
+        {status === "requesting-camera" && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <p className="text-white/70 text-sm">Requesting camera access…</p>
+          </div>
+        )}
+      </div>
+
+      {lastError && (
+        <p className="text-red-600 text-sm text-center">{lastError}</p>
+      )}
+
+      <Button
+        onClick={startScan}
+        disabled={status === "requesting-camera"}
+        size="lg"
+        className="w-full"
+      >
+        {status === "error" ? "Try Again" : "Start Scanning"}
+      </Button>
+    </div>
+  );
+}
