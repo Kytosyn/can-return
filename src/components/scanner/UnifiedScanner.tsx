@@ -1,9 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { scanFromCamera } from "../../lib/barcode/scanner";
 import { classifyPackaging, videoToCanvas, initClassifier, subscribeClassifier } from "../../lib/classifier/packaging-classifier";
 import { detectDepositMark } from "../../lib/deposit-mark/detector";
-import type { BarcodeResult } from "../../lib/barcode/types";
 import type { ClassificationResult, ClassifierState } from "../../lib/classifier/types";
 import type { DepositMarkDetection } from "../../lib/deposit-mark/types";
 import type { EligibilityResult } from "../../lib/eligibility/types";
@@ -80,9 +78,6 @@ export function UnifiedScanner({ onEligibilityResult }: Props) {
         startDetectionLoop();
       }
     } catch (err: any) {
-      const msg = err.name === "NotAllowedError"
-        ? t("barcode.cameraDenied")
-        : t("barcode.cameraUnavailable");
       setResults((r) => ({ ...r, barcode: null }));
     }
   }, [t]);

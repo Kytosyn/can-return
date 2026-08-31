@@ -19,8 +19,7 @@ export function ScanPage() {
     await scanBarcode(barcode);
   };
 
-  const handleEligibilityResult = async (barcode: string, result: EligibilityResult) => {
-    // Store the result in the app store
+  const handleEligibilityResult = async (barcode: string, _result: EligibilityResult) => {
     await scanBarcode(barcode);
   };
 
