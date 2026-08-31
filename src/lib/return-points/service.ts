@@ -4,18 +4,62 @@ import type { GeoPosition, ReturnPoint, ReturnPointsCache } from "./types";
 const CACHE_KEY = "bcrs:return-points";
 const CACHE_MAX_AGE_MS = 24 * 60 * 60 * 1000; // 24 hours
 
-// In production this would be the actual Return Right API endpoint.
-// Using a placeholder URL that can be swapped when the API is documented.
-const API_URL = "https://api.returnright.sg/v1/machines";
+// BCRS BTS backend — same API that powers the official Return Right map
+// at https://returnright.sg/p/find-my-nearest-rvm
+const API_BASE = "https://bts.bcrs.sg/api/v1";
 
 /**
- * Fetch return points from the API and cache locally.
+ * Fetch all RVM locations from the BCRS API and cache locally.
  */
 async function fetchReturnPoints(): Promise<ReturnPoint[]> {
-  const res = await fetch(API_URL);
+  const res = await fetch(`${API_BASE}/locations`, {
+    headers: {
+      "Cache-Control": "no-cache, no-store, must-revalidate",
+      Pragma: "no-cache",
+      Expires: "0",
+    },
+  });
   if (!res.ok) throw new Error(`API error: ${res.status}`);
-  const data = await res.json();
-  return data.machines ?? data;
+  const json = await res.json();
+  const raw = Array.isArray(json.data) ? json.data : [];
+  return raw.map(normaliseLocation);
+}
+
+/**
+ * Fetch nearby RVMs from the BCRS API (server-side filtering).
+ */
+export async function fetchNearby(
+  lat: number,
+  lng: number,
+  radiusKm = 10,
+): Promise<ReturnPoint[]> {
+  const res = await fetch(
+    `${API_BASE}/locations/nearby?lat=${lat}&lng=${lng}&radius=${radiusKm}`,
+  );
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  const json = await res.json();
+  const raw = Array.isArray(json.data) ? json.data : [];
+  return raw.map(normaliseLocation);
+}
+
+/**
+ * Normalise a raw BCRS API location object into our ReturnPoint type.
+ * The API shape may vary, so we handle common field name patterns.
+ */
+function normaliseLocation(raw: any): ReturnPoint {
+  return {
+    id: raw.id ?? raw._id ?? raw.locationId ?? "",
+    name: raw.locationName ?? raw.name ?? "Return Right Machine",
+    address: raw.address ?? raw.streetAddress ?? "",
+    postalCode: raw.postalCode ?? raw.postal ?? "",
+    latitude: parseFloat(raw.latitude ?? raw.lat ?? 0),
+    longitude: parseFloat(raw.longitude ?? raw.lng ?? 0),
+    operatingHours: raw.rvmOpeningHours ?? raw.operatingHours ?? raw.hours ?? "Check machine",
+    type: "rvm",
+    isOperational: raw.status !== "inactive" && raw.status !== "maintenance",
+    capacityPercent:
+      raw.capacityPercent ?? raw.binLevel ?? null,
+  };
 }
 
 /**

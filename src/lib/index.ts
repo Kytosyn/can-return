@@ -33,6 +33,7 @@ export type {
 
 export {
   loadReturnPoints,
+  fetchNearby,
   getCurrentPosition,
   sortByDistance,
   filterByPostal,
