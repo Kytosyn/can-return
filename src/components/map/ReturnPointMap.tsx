@@ -10,8 +10,6 @@ import {
 import MarkerClusterGroup from "react-leaflet-cluster";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import "react-leaflet-cluster/assets/MarkerCluster.css";
-import "react-leaflet-cluster/assets/MarkerCluster.Default.css";
 import type { GeoPosition, ReturnPoint } from "../../lib/return-points/types";
 
 // --- Custom marker icons ---
