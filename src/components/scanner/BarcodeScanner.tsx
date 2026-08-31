@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { scanFromCamera } from "../../lib/barcode/scanner";
 import type { BarcodeResult, ScanStatus } from "../../lib/barcode/types";
 import { Button } from "../ui/Button";
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export function BarcodeScanner({ onDetected, onError }: Props) {
+  const { t } = useTranslation();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [status, setStatus] = useState<ScanStatus>("idle");
   const [lastError, setLastError] = useState<string | null>(null);
@@ -43,17 +45,12 @@ export function BarcodeScanner({ onDetected, onError }: Props) {
         />
         {status === "idle" && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <p className="text-white/70 text-sm">Tap "Start Scanning" below</p>
-          </div>
-        )}
-        {status === "scanning" && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-48 h-48 border-2 border-white/60 rounded-lg animate-pulse" />
+            <p className="text-white/70 text-sm">{t("barcode.tapToScan")}</p>
           </div>
         )}
         {status === "requesting-camera" && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <p className="text-white/70 text-sm">Requesting camera access…</p>
+            <p className="text-white/70 text-sm">{t("barcode.requestingCamera")}</p>
           </div>
         )}
       </div>
@@ -68,7 +65,7 @@ export function BarcodeScanner({ onDetected, onError }: Props) {
         size="lg"
         className="w-full"
       >
-        {status === "error" ? "Try Again" : "Start Scanning"}
+        {status === "error" ? t("barcode.tryAgain") : t("barcode.startScanning")}
       </Button>
     </div>
   );

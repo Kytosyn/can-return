@@ -1,18 +1,24 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { PrivacyNotice } from "../components/privacy/PrivacyNotice";
 import { Button } from "../components/ui/Button";
 import { clearAllData } from "../lib/storage/local";
 
+const LANGUAGES = [
+  { code: "en", label: "English", flag: "🇬🇧" },
+  { code: "zh", label: "中文", flag: "🇨🇳" },
+  { code: "ms", label: "Bahasa Melayu", flag: "🇲🇾" },
+  { code: "ta", label: "தமிழ்", flag: "🇮🇳" },
+];
+
 export function SettingsPage() {
+  const { t, i18n } = useTranslation();
   const [showPrivacy, setShowPrivacy] = useState(false);
   const [deleted, setDeleted] = useState(false);
   const [confirming, setConfirming] = useState(false);
 
   const handleDelete = async () => {
-    if (!confirming) {
-      setConfirming(true);
-      return;
-    }
+    if (!confirming) { setConfirming(true); return; }
     await clearAllData();
     setDeleted(true);
     setConfirming(false);
@@ -21,12 +27,35 @@ export function SettingsPage() {
   return (
     <div className="px-4 pt-6 space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-white">Settings</h1>
+        <h1 className="text-2xl font-bold text-white">{t("settings.title")}</h1>
       </div>
+
+      {/* Language selector */}
+      <section className="space-y-3">
+        <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide">
+          {t("settings.language")}
+        </h2>
+        <div className="grid grid-cols-2 gap-2">
+          {LANGUAGES.map((lang) => (
+            <button
+              key={lang.code}
+              onClick={() => i18n.changeLanguage(lang.code)}
+              className={`flex items-center gap-2 px-4 py-3 rounded-xl border text-sm font-medium transition-colors ${
+                i18n.language === lang.code
+                  ? "bg-brand-600 border-brand-500 text-white"
+                  : "bg-gray-800 border-gray-700 text-gray-300 active:bg-gray-700"
+              }`}
+            >
+              <span className="text-lg">{lang.flag}</span>
+              {lang.label}
+            </button>
+          ))}
+        </div>
+      </section>
 
       <section className="space-y-3">
         <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide">
-          Data & Privacy
+          {t("settings.dataPrivacy")}
         </h2>
 
         <button
@@ -35,10 +64,8 @@ export function SettingsPage() {
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="font-medium text-white">Privacy Notice</p>
-              <p className="text-xs text-gray-400 mt-0.5">
-                What data is used and what stays on your device
-              </p>
+              <p className="font-medium text-white">{t("settings.privacyNotice")}</p>
+              <p className="text-xs text-gray-400 mt-0.5">{t("settings.privacyNoticeDesc")}</p>
             </div>
             <span className="text-gray-500">{showPrivacy ? "▲" : "▼"}</span>
           </div>
@@ -47,65 +74,33 @@ export function SettingsPage() {
         {showPrivacy && <PrivacyNotice />}
 
         <div className="border border-gray-800 rounded-xl p-4">
-          <p className="font-medium text-white mb-1">Delete Local Data</p>
-          <p className="text-xs text-gray-400 mb-3">
-            Erases all cached scan history and return point data from this
-            device. The eligibility database will be re-downloaded on next
-            visit.
-          </p>
+          <p className="font-medium text-white mb-1">{t("settings.deleteLocalData")}</p>
+          <p className="text-xs text-gray-400 mb-3">{t("settings.deleteDesc")}</p>
           {deleted ? (
-            <p className="text-sm text-green-700 font-medium">
-              All local data has been cleared.
-            </p>
+            <p className="text-sm text-green-700 font-medium">{t("settings.dataCleared")}</p>
           ) : (
-            <Button
-              variant={confirming ? "danger" : "secondary"}
-              size="sm"
-              onClick={handleDelete}
-              onBlur={() => setConfirming(false)}
-            >
-              {confirming ? "Confirm Delete" : "Delete Local Data"}
+            <Button variant={confirming ? "danger" : "secondary"} size="sm" onClick={handleDelete} onBlur={() => setConfirming(false)}>
+              {confirming ? t("settings.confirmDelete") : t("settings.deleteLocalData")}
             </Button>
           )}
         </div>
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide">
-          About
-        </h2>
+        <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide">{t("settings.about")}</h2>
         <div className="border border-gray-800 rounded-xl p-4 text-sm text-gray-300 space-y-2">
-          <p>
-            <strong>Can Return?</strong> helps you check if a drink container
-            carries a 10-cent deposit under Singapore's Beverage Container
-            Return Scheme (BCRS).
-          </p>
-          <p>
-            This is an independent tool — not affiliated with NEA, the BCRS
-            operator, or Return Right.
-          </p>
-          <p className="text-xs text-gray-400">Version 0.1.0</p>
+          <p dangerouslySetInnerHTML={{ __html: t("settings.aboutText") }} />
+          <p>{t("settings.notAffiliated")}</p>
+          <p className="text-xs text-gray-400">{t("settings.version", { version: "0.1.0" })}</p>
         </div>
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide">
-          BCRS Info
-        </h2>
+        <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide">{t("settings.bcrsInfo")}</h2>
         <div className="border border-gray-800 rounded-xl p-4 text-sm text-gray-300 space-y-2">
-          <p>
-            From <strong>1 April 2026</strong>, beverage producers in Singapore
-            must register eligible containers (PET plastic, aluminium, steel;
-            150ml–3L) with a Deposit Mark.
-          </p>
-          <p>
-            Consumers pay a 10-cent deposit at purchase and reclaim it by
-            returning the container at a Return Right reverse vending machine.
-          </p>
-          <p>
-            <strong>Transition period:</strong> 1 Apr – 30 Sep 2026. Not all
-            products may carry the mark yet during this time.
-          </p>
+          <p dangerouslySetInnerHTML={{ __html: t("settings.bcrsInfoText1") }} />
+          <p>{t("settings.bcrsInfoText2")}</p>
+          <p><strong>{t("settings.transitionPeriod")}</strong> {t("settings.transitionPeriodText")}</p>
         </div>
       </section>
     </div>

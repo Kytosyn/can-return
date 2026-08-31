@@ -1,4 +1,5 @@
 import { FormEvent, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "../ui/Button";
 
 interface Props {
@@ -6,6 +7,7 @@ interface Props {
 }
 
 export function ManualEntry({ onSubmit }: Props) {
+  const { t } = useTranslation();
   const [value, setValue] = useState("");
 
   const handleSubmit = (e: FormEvent) => {
@@ -19,7 +21,7 @@ export function ManualEntry({ onSubmit }: Props) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3">
       <label className="text-sm font-medium text-gray-300">
-        Enter barcode number (8–13 digits)
+        {t("manual.label")}
       </label>
       <input
         type="text"
@@ -27,7 +29,7 @@ export function ManualEntry({ onSubmit }: Props) {
         pattern="[0-9]*"
         value={value}
         onChange={(e) => setValue(e.target.value.replace(/\D/g, ""))}
-        placeholder="e.g. 8888001234567"
+        placeholder={t("manual.placeholder")}
         className="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-gray-100 rounded-xl text-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent placeholder:text-gray-500"
         maxLength={13}
       />
@@ -36,7 +38,7 @@ export function ManualEntry({ onSubmit }: Props) {
         variant="secondary"
         disabled={!/^\d{8,13}$/.test(value.replace(/\s/g, ""))}
       >
-        Check Eligibility
+        {t("manual.checkEligibility")}
       </Button>
     </form>
   );

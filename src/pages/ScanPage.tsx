@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { BarcodeScanner } from "../components/scanner/BarcodeScanner";
 import { ManualEntry } from "../components/scanner/ManualEntry";
 import { PackageScanner } from "../components/scanner/PackageScanner";
@@ -15,6 +16,7 @@ import type { DepositMarkDetection } from "../lib/deposit-mark/types";
 type ScanMode = "scan" | "manual" | "identify" | "deposit";
 
 export function ScanPage() {
+  const { t } = useTranslation();
   const [mode, setMode] = useState<ScanMode>("scan");
   const {
     lastScan, lastClassification, lastDepositMark,
@@ -85,53 +87,22 @@ export function ScanPage() {
   return (
     <div className="px-4 pt-6 space-y-6">
       <div className="text-center">
-        <h1 className="text-2xl font-bold text-white">Can Return?</h1>
-        <p className="text-sm text-gray-400 mt-1">
-          Check if your drink container carries a 10¢ BCRS deposit
-        </p>
+        <h1 className="text-2xl font-bold text-white">{t("app.name")}</h1>
+        <p className="text-sm text-gray-400 mt-1">{t("app.tagline")}</p>
       </div>
 
       <div className="flex rounded-xl bg-gray-800 p-1">
-        <button
-          onClick={() => { setMode("scan"); clearAll(); }}
-          className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
-            mode === "scan"
-              ? "bg-gray-700 shadow text-white"
-              : "text-gray-400"
-          }`}
-        >
-          Barcode
-        </button>
-        <button
-          onClick={() => { setMode("manual"); clearAll(); }}
-          className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
-            mode === "manual"
-              ? "bg-gray-700 shadow text-white"
-              : "text-gray-400"
-          }`}
-        >
-          Manual
-        </button>
-        <button
-          onClick={() => { setMode("identify"); clearAll(); }}
-          className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
-            mode === "identify"
-              ? "bg-gray-700 shadow text-white"
-              : "text-gray-400"
-          }`}
-        >
-          Package
-        </button>
-        <button
-          onClick={() => { setMode("deposit"); clearAll(); }}
-          className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
-            mode === "deposit"
-              ? "bg-gray-700 shadow text-white"
-              : "text-gray-400"
-          }`}
-        >
-          10c Mark
-        </button>
+        {(["scan", "manual", "identify", "deposit"] as ScanMode[]).map((m) => (
+          <button
+            key={m}
+            onClick={() => { setMode(m); clearAll(); }}
+            className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
+              mode === m ? "bg-gray-700 shadow text-white" : "text-gray-400"
+            }`}
+          >
+            {t(`scan.${m === "scan" ? "barcode" : m === "identify" ? "package" : m}`)}
+          </button>
+        ))}
       </div>
 
       {mode === "scan" && <BarcodeScanner onDetected={handleDetected} />}
@@ -141,10 +112,10 @@ export function ScanPage() {
 
       <p className="text-xs text-center text-gray-500">
         {mode === "deposit"
-          ? "Deposit mark detection runs on-device — no image is uploaded."
+          ? t("scan.privacyNoteDeposit")
           : mode === "identify"
-            ? "Image analysis runs on-device — nothing is uploaded."
-            : "Scanning runs entirely on your device — no data is uploaded."}
+            ? t("scan.privacyNoteIdentify")
+            : t("scan.privacyNote")}
       </p>
     </div>
   );

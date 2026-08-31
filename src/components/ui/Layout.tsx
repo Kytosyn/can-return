@@ -1,12 +1,15 @@
 import { NavLink, Outlet } from "react-router-dom";
-
-const navItems = [
-  { to: "/", label: "Scan", icon: "📷" },
-  { to: "/nearby", label: "Nearby", icon: "📍" },
-  { to: "/settings", label: "Settings", icon: "⚙️" },
-];
+import { useTranslation } from "react-i18next";
 
 export function Layout() {
+  const { t } = useTranslation();
+
+  const navItems = [
+    { to: "/", label: t("nav.scan"), icon: "📷" },
+    { to: "/nearby", label: t("nav.nearby"), icon: "📍" },
+    { to: "/settings", label: t("nav.settings"), icon: "⚙️" },
+  ];
+
   return (
     <div className="flex flex-col min-h-dvh max-w-lg mx-auto bg-gray-950">
       <main className="flex-1 pb-20">
