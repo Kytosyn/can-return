@@ -11,7 +11,7 @@
     "privacyNoteDeposit": "押金标记检测在设备上进行——不会上传任何图像。"
   },
   "barcode": {
-    "tapToScan": "点击下方"开始扫描"",
+    "tapToScan": "点击下方「开始扫描」",
     "requestingCamera": "正在请求相机权限…",
     "startScanning": "开始扫描",
     "tryAgain": "重试",
