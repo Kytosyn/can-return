@@ -31,6 +31,13 @@ export type {
   ReferenceEmbedding,
 } from "./classifier/types";
 
+export { detectDepositMark } from "./deposit-mark/detector";
+export type {
+  DepositMarkDetection,
+  DepositMarkSpec,
+} from "./deposit-mark/types";
+export { BCRS_DEPOSIT_MARK_SPEC } from "./deposit-mark/types";
+
 export {
   loadReturnPoints,
   fetchNearby,
