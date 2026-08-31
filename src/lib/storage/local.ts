@@ -11,7 +11,6 @@ export interface ScanRecord {
 
 const HISTORY_KEY = `${DB_PREFIX}scan-history`;
 const ELIGIBILITY_DB_KEY = `${DB_PREFIX}eligibility-db`;
-const RETURN_POINTS_KEY = `${DB_PREFIX}return-points`;
 
 // --- Eligibility DB persistence ---
 
@@ -48,5 +47,3 @@ export async function clearAllData(): Promise<void> {
     await del(k);
   }
 }
-
-export { RETURN_POINTS_KEY };

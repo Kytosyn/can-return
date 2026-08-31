@@ -16,7 +16,7 @@ export function NearbyPage() {
   const [locationError, setLocationError] = useState<string | null>(null);
   const [showPermissionHint, setShowPermissionHint] = useState(false);
 
-  useEffect(() => { fetchReturnPoints(); }, [fetchReturnPoints]);
+  useEffect(() => { fetchReturnPoints().catch(() => {}); }, [fetchReturnPoints]);
 
   const confirmLocation = async () => {
     setShowPermissionHint(false);
@@ -107,9 +107,9 @@ export function NearbyPage() {
               <p className="text-xs text-gray-400">{p.address}</p>
               <div className="flex items-center gap-3 text-xs text-gray-500 flex-wrap">
                 {p.operatingHours && <span>{p.operatingHours}</span>}
-                {"distanceKm" in p && (p as any).distanceKm !== undefined && (
+                {p.distanceKm !== undefined && (
                   <span className="text-gray-400">
-                    {(p as any).distanceKm < 1 ? `${Math.round((p as any).distanceKm * 1000)}m` : `${(p as any).distanceKm.toFixed(1)}km`}
+                    {p.distanceKm < 1 ? `${Math.round(p.distanceKm * 1000)}m` : `${p.distanceKm.toFixed(1)}km`}
                   </span>
                 )}
               </div>

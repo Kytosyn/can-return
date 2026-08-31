@@ -232,9 +232,9 @@ export function ReturnPointMap({ points, userPosition }: Props) {
                       >
                         {status.label}
                       </span>
-                      {p.hours && (
+                      {p.operatingHours && (
                         <span style={{ color: "#9ca3af" }}>
-                          {p.hours}
+                          {p.operatingHours}
                         </span>
                       )}
                     </div>

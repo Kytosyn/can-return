@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation, Trans } from "react-i18next";
 import { PrivacyNotice } from "../components/privacy/PrivacyNotice";
 import { Button } from "../components/ui/Button";
 import { clearAllData } from "../lib/storage/local";
@@ -89,7 +89,7 @@ export function SettingsPage() {
       <section className="space-y-3">
         <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide">{t("settings.about")}</h2>
         <div className="border border-gray-800 rounded-xl p-4 text-sm text-gray-300 space-y-2">
-          <p dangerouslySetInnerHTML={{ __html: t("settings.aboutText") }} />
+          <p><Trans i18nKey="settings.aboutText"><strong>Can Return?</strong> helps you check if a drink container carries a 10-cent deposit under Singapore's Beverage Container Return Scheme (BCRS).</Trans></p>
           <p>{t("settings.notAffiliated")}</p>
           <p className="text-xs text-gray-400">{t("settings.version", { version: "0.1.0" })}</p>
         </div>
@@ -98,7 +98,7 @@ export function SettingsPage() {
       <section className="space-y-3">
         <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide">{t("settings.bcrsInfo")}</h2>
         <div className="border border-gray-800 rounded-xl p-4 text-sm text-gray-300 space-y-2">
-          <p dangerouslySetInnerHTML={{ __html: t("settings.bcrsInfoText1") }} />
+          <p><Trans i18nKey="settings.bcrsInfoText1">From <strong>1 April 2026</strong>, beverage producers in Singapore must register eligible containers (PET plastic, aluminium, steel; 150ml–3L) with a Deposit Mark.</Trans></p>
           <p>{t("settings.bcrsInfoText2")}</p>
           <p><strong>{t("settings.transitionPeriod")}</strong> {t("settings.transitionPeriodText")}</p>
         </div>

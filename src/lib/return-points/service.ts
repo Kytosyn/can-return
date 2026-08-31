@@ -47,13 +47,15 @@ export async function fetchNearby(
  * The API shape may vary, so we handle common field name patterns.
  */
 function normaliseLocation(raw: any): ReturnPoint {
+  const lat = parseFloat(raw.latitude ?? raw.lat ?? 0);
+  const lng = parseFloat(raw.longitude ?? raw.lng ?? 0);
   return {
     id: String(raw.id ?? raw._id ?? raw.locationId ?? ""),
     name: raw.locationName ?? raw.name ?? "Return Right Machine",
     address: raw.address ?? raw.streetAddress ?? "",
     postalCode: raw.postalCode ?? raw.postal ?? "",
-    latitude: parseFloat(raw.latitude ?? raw.lat ?? 0),
-    longitude: parseFloat(raw.longitude ?? raw.lng ?? 0),
+    latitude: Number.isFinite(lat) ? lat : 0,
+    longitude: Number.isFinite(lng) ? lng : 0,
     operatingHours: raw.rvmOpeningHours ?? raw.operatingHours ?? raw.hours ?? "",
     type: "rvm",
     isOperational: raw.status === "RUNNING",

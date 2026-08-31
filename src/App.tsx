@@ -7,7 +7,7 @@ export default function App() {
   const initDb = useAppStore((s) => s.initDb);
 
   useEffect(() => {
-    initDb();
+    initDb().catch(console.error);
   }, [initDb]);
 
   return <RouterProvider router={router} />;

@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { scanFromCamera } from "../../lib/barcode/scanner";
 import type { BarcodeResult, ScanStatus } from "../../lib/barcode/types";
@@ -14,6 +14,17 @@ export function BarcodeScanner({ onDetected, onError }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [status, setStatus] = useState<ScanStatus>("idle");
   const [lastError, setLastError] = useState<string | null>(null);
+
+  // Stop camera stream on unmount
+  useEffect(() => {
+    return () => {
+      const video = videoRef.current;
+      if (video?.srcObject) {
+        (video.srcObject as MediaStream).getTracks().forEach((track) => track.stop());
+        video.srcObject = null;
+      }
+    };
+  }, []);
 
   const startScan = useCallback(async () => {
     if (!videoRef.current) return;

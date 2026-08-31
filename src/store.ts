@@ -53,12 +53,15 @@ export const useAppStore = create<AppState>((set, get) => ({
   nearbyPoints: [],
 
   initDb: async () => {
-    const cached = await loadEligibilityDb();
-    if (cached) {
-      set({ eligibilityDb: cached as EligibilityDatabase, dbReady: true });
-      return;
+    try {
+      const cached = await loadEligibilityDb();
+      if (cached && typeof cached === "object" && "entries" in cached) {
+        set({ eligibilityDb: cached as EligibilityDatabase, dbReady: true });
+        return;
+      }
+    } catch {
+      // IndexedDB corrupted — fall through to sample data
     }
-    // Use sample data as default, save to IDB
     const sample = getSampleDatabase();
     await saveEligibilityDb(sample);
     set({ eligibilityDb: sample, dbReady: true });

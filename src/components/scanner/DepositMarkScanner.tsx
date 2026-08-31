@@ -1,5 +1,5 @@
-import { useCallback, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation, Trans } from "react-i18next";
 import { detectDepositMark } from "../../lib/deposit-mark/detector";
 import type { DepositMarkDetection } from "../../lib/deposit-mark/types";
 import { Button } from "../ui/Button";
@@ -17,6 +17,15 @@ export function DepositMarkScanner({ onDetected, onError }: Props) {
   const [analysing, setAnalysing] = useState(false);
   const streamRef = useRef<MediaStream | null>(null);
 
+  const stopCamera = useCallback(() => {
+    streamRef.current?.getTracks().forEach((t) => t.stop());
+    streamRef.current = null;
+    setCameraActive(false);
+  }, []);
+
+  // Stop camera stream on unmount
+  useEffect(() => stopCamera, [stopCamera]);
+
   const startCamera = useCallback(async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment", width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false });
@@ -24,8 +33,6 @@ export function DepositMarkScanner({ onDetected, onError }: Props) {
       if (videoRef.current) { videoRef.current.srcObject = stream; videoRef.current.setAttribute("playsinline", "true"); await videoRef.current.play(); setCameraActive(true); }
     } catch (err: any) { onError?.(err.name === "NotAllowedError" ? t("barcode.cameraDenied") : t("barcode.cameraUnavailable")); }
   }, [onError, t]);
-
-  const stopCamera = useCallback(() => { streamRef.current?.getTracks().forEach((t) => t.stop()); streamRef.current = null; setCameraActive(false); }, []);
 
   const handleCapture = useCallback(() => {
     if (!videoRef.current) return;
@@ -57,7 +64,11 @@ export function DepositMarkScanner({ onDetected, onError }: Props) {
         {!cameraActive && (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
             <span className="text-4xl">🔍</span>
-            <p className="text-white/70 text-sm text-center px-6" dangerouslySetInnerHTML={{ __html: t("depositMark.pointCamera") }} />
+            <p className="text-white/70 text-sm text-center px-6">
+              <Trans i18nKey="depositMark.pointCamera">
+                Point your camera at the <strong>Deposit Mark</strong> on the container — the circular logo with "10c SG Return"
+              </Trans>
+            </p>
           </div>
         )}
         {cameraActive && (
