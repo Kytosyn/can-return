@@ -5,7 +5,23 @@ import zh from "./locales/zh.json";
 import ms from "./locales/ms.json";
 import ta from "./locales/ta.json";
 
-const savedLang = localStorage.getItem("bcrs:lang") || "en";
+const SUPPORTED = ["en", "zh", "ms", "ta"] as const;
+
+function detectLanguage(): string {
+  // 1. User explicitly chose a language before
+  const saved = localStorage.getItem("bcrs:lang");
+  if (saved && SUPPORTED.includes(saved as any)) return saved;
+
+  // 2. Browser/system language
+  const browser = navigator.language; // e.g. "zh-SG", "ms", "ta-LK", "en-GB"
+  const langCode = browser.split("-")[0].toLowerCase();
+  if (SUPPORTED.includes(langCode as any)) return langCode;
+
+  // 3. Fallback
+  return "en";
+}
+
+const savedLang = detectLanguage();
 
 i18n.use(initReactI18next).init({
   resources: {
