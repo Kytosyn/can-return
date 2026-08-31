@@ -83,10 +83,12 @@ export const useAppStore = create<AppState>((set, get) => ({
   fetchReturnPoints: async () => {
     const cache = await loadReturnPoints();
     set({ returnPointsCache: cache });
-    // Auto-sort if position is known
     const { userPosition } = get();
     if (userPosition) {
       set({ nearbyPoints: sortByDistance(cache.points, userPosition) });
+    } else {
+      // Show all points even without user location
+      set({ nearbyPoints: cache.points });
     }
   },
 
