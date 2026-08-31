@@ -137,33 +137,46 @@ export function NearbyPage() {
           <p className="text-gray-500 text-sm">Loading return points…</p>
         )}
 
-        {nearbyPoints.map((p) => (
-          <div
-            key={p.id}
-            className="border border-gray-800 rounded-xl p-3 space-y-1"
-          >
-            <div className="flex items-start justify-between">
-              <h3 className="font-medium text-sm text-white">{p.name}</h3>
-              {!p.isOperational && (
-                <span className="text-xs bg-red-900 text-red-300 px-2 py-0.5 rounded-full">
-                  Offline
+        {nearbyPoints.length > 0 && (
+          <p className="text-xs text-gray-500">
+            {nearbyPoints.length} return points found
+          </p>
+        )}
+
+        {nearbyPoints.slice(0, 50).map((p) => {
+          const statusMap: Record<string, { bg: string; text: string; label: string }> = {
+            RUNNING: { bg: "bg-green-900", text: "text-green-300", label: "Online" },
+            FULL: { bg: "bg-amber-900", text: "text-amber-300", label: "Full" },
+            ERROR: { bg: "bg-red-900", text: "text-red-300", label: "Error" },
+            OFFLINE: { bg: "bg-gray-800", text: "text-gray-400", label: "Offline" },
+            MAINTENANCE: { bg: "bg-gray-800", text: "text-gray-400", label: "Maintenance" },
+          };
+          const st = statusMap[(p.status || "").toUpperCase()] || statusMap.RUNNING;
+          return (
+            <div
+              key={p.id}
+              className="border border-gray-800 rounded-xl p-3 space-y-1.5 hover:border-gray-700 transition-colors"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <h3 className="font-medium text-sm text-white leading-tight">{p.name}</h3>
+                <span className={`text-xs ${st.bg} ${st.text} px-2 py-0.5 rounded-full whitespace-nowrap flex-shrink-0`}>
+                  {st.label}
                 </span>
-              )}
+              </div>
+              <p className="text-xs text-gray-400">{p.address}</p>
+              <div className="flex items-center gap-3 text-xs text-gray-500 flex-wrap">
+                {p.operatingHours && <span>{p.operatingHours}</span>}
+                {"distanceKm" in p && (p as any).distanceKm !== undefined && (
+                  <span className="text-gray-400">
+                    {(p as any).distanceKm < 1
+                      ? `${Math.round((p as any).distanceKm * 1000)}m`
+                      : `${(p as any).distanceKm.toFixed(1)}km`}
+                  </span>
+                )}
+              </div>
             </div>
-            <p className="text-xs text-gray-400">{p.address}</p>
-            <div className="flex items-center gap-3 text-xs text-gray-400">
-              <span>🕐 {p.operatingHours}</span>
-              {"distanceKm" in p && (
-                <span>📏 {(p as any).distanceKm.toFixed(1)} km</span>
-              )}
-              {p.capacityPercent !== null && (
-                <span>
-                  📦 {p.capacityPercent > 50 ? "Plenty of space" : "Filling up"}
-                </span>
-              )}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

@@ -13,6 +13,8 @@ export interface ReturnPoint {
   isOperational: boolean;
   /** 0–100 capacity remaining, null if unknown */
   capacityPercent: number | null;
+  /** Raw status from API: RUNNING, FULL, ERROR, OFFLINE, MAINTENANCE */
+  status?: string;
 }
 
 export interface ReturnPointsCache {

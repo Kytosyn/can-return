@@ -48,18 +48,44 @@ export async function fetchNearby(
  */
 function normaliseLocation(raw: any): ReturnPoint {
   return {
-    id: raw.id ?? raw._id ?? raw.locationId ?? "",
+    id: String(raw.id ?? raw._id ?? raw.locationId ?? ""),
     name: raw.locationName ?? raw.name ?? "Return Right Machine",
     address: raw.address ?? raw.streetAddress ?? "",
     postalCode: raw.postalCode ?? raw.postal ?? "",
     latitude: parseFloat(raw.latitude ?? raw.lat ?? 0),
     longitude: parseFloat(raw.longitude ?? raw.lng ?? 0),
-    operatingHours: raw.rvmOpeningHours ?? raw.operatingHours ?? raw.hours ?? "Check machine",
+    operatingHours: raw.rvmOpeningHours ?? raw.operatingHours ?? raw.hours ?? "",
     type: "rvm",
-    isOperational: raw.status !== "inactive" && raw.status !== "maintenance",
-    capacityPercent:
-      raw.capacityPercent ?? raw.binLevel ?? null,
+    isOperational: raw.status === "RUNNING",
+    capacityPercent: raw.capacityPercent ?? raw.binLevel ?? null,
+    status: raw.status ?? "",
   };
+}
+
+/**
+ * Load the static scraped RVM data as an offline fallback.
+ */
+async function loadStaticFallback(): Promise<ReturnPoint[]> {
+  try {
+    const res = await fetch("/rvm-locations.json");
+    if (!res.ok) return getSamplePoints();
+    const json = await res.json();
+    return (json.locations || []).map((l: any) => ({
+      id: String(l.id),
+      name: l.name,
+      address: l.address,
+      postalCode: l.postalCode,
+      latitude: l.lat,
+      longitude: l.lng,
+      operatingHours: l.hours || "",
+      type: "rvm" as const,
+      isOperational: l.status === "RUNNING",
+      capacityPercent: null,
+      status: l.status || "",
+    }));
+  } catch {
+    return getSamplePoints();
+  }
 }
 
 /**
@@ -86,7 +112,9 @@ export async function loadReturnPoints(): Promise<ReturnPointsCache> {
     return fresh;
   } catch {
     if (cached) return cached;
-    return { lastSynced: new Date().toISOString(), points: getSamplePoints() };
+    // Use the static scraped data as offline fallback
+    const fallback = await loadStaticFallback();
+    return { lastSynced: new Date().toISOString(), points: fallback };
   }
 }
 
