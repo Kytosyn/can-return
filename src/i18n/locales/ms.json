@@ -6,9 +6,9 @@
     "manual": "Manual",
     "package": "Bungkusan",
     "depositMark": "Tanda 10sen",
-    "privacyNote": "Imbasan dijalankan sepenuhnya pada peranti anda — tiada data dimuat naik.",
-    "privacyNoteIdentify": "Analisis imej dijalankan pada peranti — tiada apa dimuat naik.",
-    "privacyNoteDeposit": "Pengesanan tanda deposit dijalankan pada peranti — tiada imej dimuat naik."
+    "privacyNote": "Semua imbasan berlaku pada peranti anda. Tiada data dimuat naik.",
+    "privacyNoteIdentify": "Analisis imej berjalan pada peranti anda. Tiada apa dimuat naik.",
+    "privacyNoteDeposit": "Pengesanan tanda deposit berjalan pada peranti anda. Tiada imej dimuat naik."
   },
   "barcode": {
     "tapToScan": "Ketik \"Mula Mengimbas\" di bawah",

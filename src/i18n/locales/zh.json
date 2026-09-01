@@ -6,9 +6,9 @@
     "manual": "手动",
     "package": "包装",
     "depositMark": "10分标记",
-    "privacyNote": "扫描完全在您的设备上进行——不会上传任何数据。",
-    "privacyNoteIdentify": "图像分析在设备上进行——不会上传任何内容。",
-    "privacyNoteDeposit": "押金标记检测在设备上进行——不会上传任何图像。"
+    "privacyNote": "所有扫描在您的设备上进行，不会上传任何数据。",
+    "privacyNoteIdentify": "图像分析在您的设备上进行，不会上传任何内容。",
+    "privacyNoteDeposit": "押金标记检测在您的设备上进行，不会上传任何图像。"
   },
   "barcode": {
     "tapToScan": "点击下方「开始扫描」",

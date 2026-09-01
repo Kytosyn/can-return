@@ -6,9 +6,9 @@
     "manual": "Manual",
     "package": "Package",
     "depositMark": "10c Mark",
-    "privacyNote": "Scanning runs entirely on your device — no data is uploaded.",
-    "privacyNoteIdentify": "Image analysis runs on-device — nothing is uploaded.",
-    "privacyNoteDeposit": "Deposit mark detection runs on-device — no image is uploaded."
+    "privacyNote": "All scanning happens on your device. Nothing is uploaded.",
+    "privacyNoteIdentify": "Image analysis runs on your device. Nothing is uploaded.",
+    "privacyNoteDeposit": "Deposit mark detection runs on your device. Nothing is uploaded."
   },
   "barcode": {
     "tapToScan": "Tap \"Start Scanning\" below",

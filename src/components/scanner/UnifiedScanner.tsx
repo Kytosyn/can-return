@@ -272,10 +272,6 @@ export function UnifiedScanner({ onEligibilityResult }: Props) {
           </>
         )}
       </div>
-
-      <p className="text-xs text-center text-gray-500">
-        {t("scan.privacyNote")}
-      </p>
     </div>
   );
 }
