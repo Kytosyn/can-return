@@ -1,12 +1,11 @@
-import { kv } from "@vercel/kv";
+import { put, head } from "@vercel/blob";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
 /**
- * Persistent RVM reports API using Vercel KV (Redis).
+ * Persistent RVM reports API using Vercel Blob.
  *
- * Storage design:
- *   Key: "rvm:reports" — a Redis List storing all reports as JSON strings.
- *   Reports expire after 7 days (handled on read).
+ * Stores all reports as a single JSON file in Blob storage.
+ * Free tier: 500MB storage, 10GB bandwidth/month.
  *
  * All reports are anonymous — no user IDs, no IP logging, no cookies.
  */
@@ -20,31 +19,36 @@ interface RvmReport {
   confirmations: number;
 }
 
-const KV_KEY = "rvm:reports";
+const BLOB_PATH = "rvm-reports.json";
 const MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
 const MAX_REPORTS = 2000;
-
 const VALID_ISSUES = ["full", "broken", "offline", "damaged", "slow", "other"];
 
-async function getAllReports(): Promise<RvmReport[]> {
-  const raw = await kv.lrange<string>(KV_KEY, 0, -1);
-  if (!raw || raw.length === 0) return [];
+async function loadReports(): Promise<RvmReport[]> {
+  try {
+    const exists = await head(BLOB_PATH).catch(() => null);
+    if (!exists) return [];
 
-  const cutoff = Date.now() - MAX_AGE_MS;
-  const reports: RvmReport[] = [];
-
-  for (const item of raw) {
-    try {
-      const r = typeof item === "string" ? JSON.parse(item) : item;
-      if (new Date(r.createdAt).getTime() > cutoff) {
-        reports.push(r);
-      }
-    } catch {
-      // Skip malformed entries
-    }
+    const res = await fetch(exists.url);
+    if (!res.ok) return [];
+    const data = await res.json();
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
   }
+}
 
-  return reports;
+async function saveReports(reports: RvmReport[]): Promise<void> {
+  await put(BLOB_PATH, JSON.stringify(reports), {
+    access: "public",
+    contentType: "application/json",
+    addRandomSuffix: false,
+  });
+}
+
+function pruneExpired(reports: RvmReport[]): RvmReport[] {
+  const cutoff = Date.now() - MAX_AGE_MS;
+  return reports.filter((r) => new Date(r.createdAt).getTime() > cutoff);
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -58,7 +62,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     if (req.method === "GET") {
-      const reports = await getAllReports();
+      const reports = pruneExpired(await loadReports());
       return res.status(200).json(reports);
     }
 
@@ -82,11 +86,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         confirmations: 0,
       };
 
-      // Push to the front of the list
-      await kv.lpush(KV_KEY, JSON.stringify(report));
-
-      // Trim to max size
-      await kv.ltrim(KV_KEY, 0, MAX_REPORTS - 1);
+      // Load, append, prune, save
+      const reports = pruneExpired(await loadReports());
+      reports.unshift(report);
+      if (reports.length > MAX_REPORTS) reports.length = MAX_REPORTS;
+      await saveReports(reports);
 
       return res.status(201).json(report);
     }

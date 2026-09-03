@@ -19,7 +19,7 @@
     "@capacitor/ios": "^6.0.0",
     "@tensorflow/tfjs": "^4.20.0",
     "@tensorflow-models/mobilenet": "^2.1.0",
-    "@vercel/kv": "^2.0.0",
+    "@vercel/blob": "^2.0.0",
     "barcode-detector": "^2.3.0",
     "i18next": "^23.14.0",
     "idb-keyval": "^6.2.1",
