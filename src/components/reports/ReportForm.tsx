@@ -11,7 +11,6 @@ interface Props {
 }
 
 export function ReportForm({ rvmId, rvmName, onSubmitted, onCancel }: Props) {
-  const { t } = useTranslation();
   const [selectedIssue, setSelectedIssue] = useState<ReportIssueType | null>(null);
   const [description, setDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
