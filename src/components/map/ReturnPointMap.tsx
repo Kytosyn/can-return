@@ -12,6 +12,15 @@ if (MAPBOX_TOKEN) {
 
 const SG_CENTER: [number, number] = [103.8198, 1.3521];
 
+function hasWebGL(): boolean {
+  try {
+    const canvas = document.createElement("canvas");
+    return !!(canvas.getContext("webgl") || canvas.getContext("webgl2"));
+  } catch {
+    return false;
+  }
+}
+
 const STATUS_COLORS: Record<string, string> = {
   RUNNING: "#22c55e",
   FULL: "#f59e0b",
@@ -39,6 +48,8 @@ export function ReturnPointMap({ points, userPosition }: Props) {
   const userMarkerRef = useRef<mapboxgl.Marker | null>(null);
   const popupRef = useRef<mapboxgl.Popup | null>(null);
   const [reportSummary, setReportSummary] = useState<Map<string, { count: number; topIssue: ReportIssueType; latest: string }>>(new Map());
+  const [webglSupported] = useState(() => hasWebGL());
+  const [mapError, setMapError] = useState(false);
 
   const validPoints = useMemo(
     () => points.filter((p) => p.latitude && p.longitude && p.latitude !== 0 && p.longitude !== 0),
@@ -77,17 +88,23 @@ export function ReturnPointMap({ points, userPosition }: Props) {
 
   // Initialize map
   useEffect(() => {
-    if (!mapContainer.current || map.current) return;
+    if (!mapContainer.current || map.current || !webglSupported) return;
 
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: "mapbox://styles/mapbox/dark-v11",
-      center: userPosition ? [userPosition.longitude, userPosition.latitude] : SG_CENTER,
-      zoom: 11,
-      attributionControl: false,
-    });
+    try {
+      map.current = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: "mapbox://styles/mapbox/dark-v11",
+        center: userPosition ? [userPosition.longitude, userPosition.latitude] : SG_CENTER,
+        zoom: 11,
+        attributionControl: false,
+      });
 
-    map.current.addControl(new mapboxgl.NavigationControl({ showCompass: false }), "top-right");
+      map.current.addControl(new mapboxgl.NavigationControl({ showCompass: false }), "top-right");
+
+      map.current.on("error", () => setMapError(true));
+    } catch {
+      setMapError(true);
+    }
 
     return () => {
       popupRef.current?.remove();
@@ -295,6 +312,19 @@ export function ReturnPointMap({ points, userPosition }: Props) {
       m.flyTo({ center: [userPosition.longitude, userPosition.latitude], zoom: 14, essential: true });
     }
   }, [userPosition]);
+
+  // Fallback when WebGL is not supported
+  if (!webglSupported || mapError) {
+    return (
+      <div className="w-full h-80 rounded-2xl overflow-hidden border border-gray-800 bg-gray-900 flex flex-col items-center justify-center p-4 text-center">
+        <span className="text-3xl mb-2">🗺️</span>
+        <p className="text-gray-300 text-sm font-medium">Map unavailable</p>
+        <p className="text-gray-500 text-xs mt-1">
+          Your browser doesn't support 3D maps. Use the list below to find return points.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-80 rounded-2xl overflow-hidden border border-gray-800 relative">
