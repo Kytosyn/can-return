@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useAppStore } from "../store";
 import { ReturnPointMap } from "../components/map/ReturnPointMap";
+import { ReportForm } from "../components/reports/ReportForm";
 import { getCurrentPosition } from "../lib/return-points/service";
 import { Button } from "../components/ui/Button";
 
@@ -15,8 +16,17 @@ export function NearbyPage() {
   const [postalInput, setPostalInput] = useState("");
   const [locationError, setLocationError] = useState<string | null>(null);
   const [showPermissionHint, setShowPermissionHint] = useState(false);
+  const [reportTarget, setReportTarget] = useState<{ id: string; name: string } | null>(null);
 
   useEffect(() => { fetchReturnPoints().catch(() => {}); }, [fetchReturnPoints]);
+
+  // Global callback for popup "Report Issue" button
+  useEffect(() => {
+    (window as any).__reportRvm = (rvmId: string, rvmName: string) => {
+      setReportTarget({ id: rvmId, name: decodeURIComponent(rvmName) });
+    };
+    return () => { delete (window as any).__reportRvm; };
+  }, []);
 
   const confirmLocation = async () => {
     setShowPermissionHint(false);
@@ -73,6 +83,16 @@ export function NearbyPage() {
       </div>
 
       {locationError && <p className="text-red-600 text-xs">{locationError}</p>}
+
+      {/* Report form overlay */}
+      {reportTarget && (
+        <ReportForm
+          rvmId={reportTarget.id}
+          rvmName={reportTarget.name}
+          onSubmitted={() => setReportTarget(null)}
+          onCancel={() => setReportTarget(null)}
+        />
+      )}
 
       <ReturnPointMap points={nearbyPoints} userPosition={userPosition} />
 

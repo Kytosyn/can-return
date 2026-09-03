@@ -1,7 +1,9 @@
-import { useEffect, useRef, useMemo } from "react";
+import { useEffect, useRef, useMemo, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import type { GeoPosition, ReturnPoint } from "../../lib/return-points/types";
+import { getRvmReportSummary, syncReportsFromApi } from "../../lib/reports/service";
+import { ISSUE_LABELS, type ReportIssueType } from "../../lib/reports/types";
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN as string;
 if (MAPBOX_TOKEN) {
@@ -36,30 +38,41 @@ export function ReturnPointMap({ points, userPosition }: Props) {
   const map = useRef<mapboxgl.Map | null>(null);
   const userMarkerRef = useRef<mapboxgl.Marker | null>(null);
   const popupRef = useRef<mapboxgl.Popup | null>(null);
+  const [reportSummary, setReportSummary] = useState<Map<string, { count: number; topIssue: ReportIssueType; latest: string }>>(new Map());
 
   const validPoints = useMemo(
     () => points.filter((p) => p.latitude && p.longitude && p.latitude !== 0 && p.longitude !== 0),
     [points],
   );
 
+  // Load reports on mount
+  useEffect(() => {
+    syncReportsFromApi().then(() => getRvmReportSummary()).then(setReportSummary).catch(() => {});
+  }, []);
+
   // Build GeoJSON from points
   const geojson = useMemo(() => ({
     type: "FeatureCollection" as const,
-    features: validPoints.map((p) => ({
-      type: "Feature" as const,
-      properties: {
-        id: p.id,
-        name: p.name,
-        address: p.address,
-        status: p.status || "RUNNING",
-        hours: p.operatingHours || "",
-        distance: p.distanceKm,
-      },
-      geometry: {
-        type: "Point" as const,
-        coordinates: [p.longitude, p.latitude],
-      },
-    })),
+    features: validPoints.map((p) => {
+      const report = reportSummary.get(p.id);
+      return {
+        type: "Feature" as const,
+        properties: {
+          id: p.id,
+          name: p.name,
+          address: p.address,
+          status: p.status || "RUNNING",
+          hours: p.operatingHours || "",
+          distance: p.distanceKm,
+          reportCount: report?.count ?? 0,
+          topIssue: report?.topIssue ?? "",
+        },
+        geometry: {
+          type: "Point" as const,
+          coordinates: [p.longitude, p.latitude],
+        };
+      };
+    }),
   }), [validPoints]);
 
   // Initialize map
@@ -185,6 +198,7 @@ export function ReturnPointMap({ points, userPosition }: Props) {
         const f = e.features[0];
         const props = f.properties!;
         const coords = (f.geometry as any).coordinates.slice();
+        const rvmId = props.id;
 
         const status = (props.status || "RUNNING").toUpperCase();
         const statusColor = STATUS_COLORS[status] || "#6b7280";
@@ -193,6 +207,15 @@ export function ReturnPointMap({ points, userPosition }: Props) {
         const statusText = statusColor === "#22c55e" ? "#6ee7b7" : statusColor === "#f59e0b" ? "#fcd34d" : "#9ca3af";
         const dist = props.distance != null
           ? `<div style="margin-top:8px;font-size:11px;color:#6b7280;">${props.distance < 1 ? `${Math.round(props.distance * 1000)}m away` : `${Number(props.distance).toFixed(1)}km away`}</div>`
+          : "";
+
+        // Report indicator
+        const reportCount = props.reportCount || 0;
+        const topIssue = props.topIssue || "";
+        const reportHtml = reportCount > 0
+          ? `<div style="margin-top:8px;padding:6px 8px;background:#7f1d1d;border:1px solid #991b1b;border-radius:8px;font-size:11px;color:#fca5a5;">
+              ⚠️ ${reportCount} user report${reportCount > 1 ? "s" : ""}${topIssue ? ` — ${ISSUE_LABELS[topIssue as ReportIssueType]?.label || topIssue}` : ""}
+            </div>`
           : "";
 
         const html = `
@@ -204,6 +227,11 @@ export function ReturnPointMap({ points, userPosition }: Props) {
               ${props.hours ? `<span style="color:#9ca3af;">${props.hours}</span>` : ""}
             </div>
             ${dist}
+            ${reportHtml}
+            <button
+              onclick="window.__reportRvm('${rvmId}', '${props.name?.replace(/'/g, "\\'")}')"
+              style="margin-top:10px;width:100%;padding:8px;background:#374151;color:#d1d5db;border:1px solid #4b5563;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;font-family:system-ui,sans-serif;"
+            >📝 Report an issue</button>
           </div>
         `;
 

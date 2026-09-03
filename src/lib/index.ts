@@ -38,6 +38,10 @@ export type {
 } from "./deposit-mark/types";
 export { BCRS_DEPOSIT_MARK_SPEC } from "./deposit-mark/types";
 
+export { submitReport, getReportsForRvm, getRvmReportSummary, syncReportsFromApi, clearReports } from "./reports/service";
+export type { RvmReport, ReportSubmission, ReportIssueType } from "./reports/types";
+export { ISSUE_LABELS } from "./reports/types";
+
 export {
   loadReturnPoints,
   fetchNearby,
