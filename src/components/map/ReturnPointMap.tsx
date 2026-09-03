@@ -178,14 +178,14 @@ export function ReturnPointMap({ points, userPosition }: Props) {
 
       // Click on cluster → zoom in
       m.on("click", "clusters", (e) => {
-        const features = m.queryRenderedFeatures(e.point, { layers: ["clusters"] });
+        const features = m.queryRenderedFeatures(e.point, { layers: ["clusters"] }) as any[];
         if (!features.length) return;
         const clusterId = features[0].properties?.cluster_id;
         const source = m.getSource("rvms") as mapboxgl.GeoJSONSource;
         source.getClusterExpansionZoom(clusterId, (err, zoom) => {
           if (err || zoom == null) return;
           m.easeTo({
-            center: (features[0].geometry as any).coordinates,
+            center: features[0].geometry.coordinates,
             zoom: zoom + 0.5,
             duration: 400,
           });
@@ -195,9 +195,9 @@ export function ReturnPointMap({ points, userPosition }: Props) {
       // Click on individual point → show popup
       m.on("click", "unclustered-point", (e) => {
         if (!e.features?.length) return;
-        const f = e.features[0];
-        const props = f.properties!;
-        const coords = (f.geometry as any).coordinates.slice();
+        const f = e.features[0] as any;
+        const props = f.properties;
+        const coords = f.geometry.coordinates.slice();
         const rvmId = props.id;
 
         const status = (props.status || "RUNNING").toUpperCase();

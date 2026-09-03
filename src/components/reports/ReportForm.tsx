@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
 import { submitReport } from "../../lib/reports/service";
 import { ISSUE_LABELS, type ReportIssueType } from "../../lib/reports/types";
 import { Button } from "../ui/Button";
