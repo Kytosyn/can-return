@@ -12,15 +12,6 @@ if (MAPBOX_TOKEN) {
 
 const SG_CENTER: [number, number] = [103.8198, 1.3521];
 
-function hasWebGL(): boolean {
-  try {
-    const canvas = document.createElement("canvas");
-    return !!(canvas.getContext("webgl") || canvas.getContext("webgl2"));
-  } catch {
-    return false;
-  }
-}
-
 const STATUS_COLORS: Record<string, string> = {
   RUNNING: "#22c55e",
   FULL: "#f59e0b",
@@ -48,7 +39,6 @@ export function ReturnPointMap({ points, userPosition }: Props) {
   const userMarkerRef = useRef<mapboxgl.Marker | null>(null);
   const popupRef = useRef<mapboxgl.Popup | null>(null);
   const [reportSummary, setReportSummary] = useState<Map<string, { count: number; topIssue: ReportIssueType; latest: string }>>(new Map());
-  const [webglSupported] = useState(() => hasWebGL());
   const [mapError, setMapError] = useState(false);
 
   const validPoints = useMemo(
@@ -88,7 +78,7 @@ export function ReturnPointMap({ points, userPosition }: Props) {
 
   // Initialize map
   useEffect(() => {
-    if (!mapContainer.current || map.current || !webglSupported) return;
+    if (!mapContainer.current || map.current) return;
 
     try {
       map.current = new mapboxgl.Map({
@@ -313,8 +303,8 @@ export function ReturnPointMap({ points, userPosition }: Props) {
     }
   }, [userPosition]);
 
-  // Fallback when WebGL is not supported
-  if (!webglSupported || mapError) {
+  // Fallback when map fails to load
+  if (mapError) {
     return (
       <div className="w-full h-80 rounded-2xl overflow-hidden border border-gray-800 bg-gray-900 flex flex-col items-center justify-center p-4 text-center">
         <span className="text-3xl mb-2">🗺️</span>
