@@ -70,7 +70,7 @@ export function ReturnPointMap({ points, userPosition }: Props) {
         geometry: {
           type: "Point" as const,
           coordinates: [p.longitude, p.latitude],
-        };
+        },
       };
     }),
   }), [validPoints]);
