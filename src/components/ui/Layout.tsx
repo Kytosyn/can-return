@@ -1,5 +1,6 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { WebGLDebug } from "../debug/WebGLDebug";
 
 export function Layout() {
   const { t } = useTranslation();
@@ -12,6 +13,7 @@ export function Layout() {
 
   return (
     <div className="flex flex-col min-h-dvh max-w-lg mx-auto bg-gray-950">
+      <WebGLDebug />
       <main className="flex-1 pb-20">
         <Outlet />
       </main>
