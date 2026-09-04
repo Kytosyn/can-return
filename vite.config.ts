@@ -36,7 +36,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           scanner: ["barcode-detector"],
-          map: ["mapbox-gl"],
+          map: ["leaflet"],
           tf: ["@tensorflow/tfjs", "@tensorflow-models/mobilenet"],
         },
       },

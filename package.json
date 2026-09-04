@@ -23,6 +23,7 @@
     "barcode-detector": "^2.3.0",
     "i18next": "^23.14.0",
     "idb-keyval": "^6.2.1",
+    "leaflet": "^1.9.4",
     "mapbox-gl": "^3.4.0",
     "react-i18next": "^15.0.0",
     "react": "^18.3.1",
