@@ -174,7 +174,7 @@ function LeafletMap({ points, userPosition }: Props) {
 
   useEffect(() => {
     if (!mapRef.current || leafletMap.current) return;
-    const center = userPosition ? [userPosition.latitude, userPosition.longitude] : SG_CENTER;
+    const center: [number, number] = userPosition ? [userPosition.latitude, userPosition.longitude] : SG_CENTER;
     leafletMap.current = L.map(mapRef.current, { center, zoom: 12, zoomControl: false });
     L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 19 }).addTo(leafletMap.current);
     L.control.zoom({ position: "topright" }).addTo(leafletMap.current);
